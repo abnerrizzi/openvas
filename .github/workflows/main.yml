@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - 'feat*'
-
+      - main
+      - 'developments'
+      
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
