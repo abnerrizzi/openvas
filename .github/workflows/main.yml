@@ -1,16 +1,16 @@
 name: Build and Push
 
-# on:
-#   push:
-#     branches:
-#       - main
-#       - development
-#       - feat*
-#     tags:
-#       - "v*"
-#   pull_request:
-#     branches:
-#       - 'master'
+on:
+  push:
+    branches:
+      - main
+      - development
+      - feat*
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - 'master'
 
 env:
   REGISTRY: ghcr.io
