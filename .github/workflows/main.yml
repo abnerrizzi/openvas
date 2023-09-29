@@ -6,6 +6,7 @@ on:
       - 'feat*'
       - main
       - 'developments'
+      - '*'
       
 jobs:
   build-and-push:
