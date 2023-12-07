@@ -10,8 +10,8 @@ tar -zxf $openvas_smb.tar.gz
 cd /build/*/
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make
+cmake -j$(nproc) -DCMAKE_BUILD_TYPE=Release ..
+make -j$(nproc)
 make install
 cd /build
 rm -rf *

@@ -23,9 +23,9 @@ tar -zxf $gvm_libs.tar.gz
 cd /build/*/
 mkdir build 
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release .. 
-make 
-make install 
+cmake -j$(nproc) -DCMAKE_BUILD_TYPE=Release .. 
+make -j$(nproc)
+make -j$(nproc) install 
 cd /build 
 rm -rf *
 
