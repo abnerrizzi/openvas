@@ -8,6 +8,10 @@ testing/bind
 testing/archive
 *.swp
 gvm-tools
+ics-gsa
 base.sql.xz
 var-lib.tar.xz
 timing
+gsa-final
+certs.tar.xz
+ver.current

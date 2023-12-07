@@ -11,10 +11,12 @@ WorkDir=$(pwd)
 # Tag to work with. Normally latest but might be using new tag during upgrades.
 TAG="latest"
 SQLBU="${TAG}.base.sql"
-TAR="${TAG}.var-lib.tar.xz"
+VER=$(cat ver.current)
+DOCKERFILE=$(mktemp)
+sed "s/\$VER/$VER/" Dockerfile.refresh > $DOCKERFILE
 # Temp working directory ... needs enough space to pull the entire feed and then compress it. ~2G
 TWD="/var/lib/openvas/" # Must have a trailing "/"
-STIME="30m" # time between resync and archiving.
+STIME="10m" # time between resync and archiving.
 # First, clean TWD and  make sure there's enough storage available before doing anything.
 if [ -d $TWD ]; then # Make sure the TWD exists and is a directory so we don't accidently destroy the system.
 	echo " Cleaning $TWD "
@@ -88,17 +90,21 @@ if [ $SQL_SIZE -le 2000 ] || [ $FEED_SIZE -le 2000 ]; then
 	logger -t db-refresh "SQL_SIZE = $SQL_SIZE : FEED_SIZE = $FEED_SIZE: Failing out"
 	exit
 fi
-echo " Push updates to www"
-scp *.xz push@www.immauss.com:/var/www/html/drupal/openvas/
-if [ $? -ne 0 ]; then
-	echo "SCP of new db failed $?"
-	logger -t db-refresh "SCP of new db failed $?"
-	exit
-fi
-# Now rebuild the image
+cp latest.base.sql.xz /home/scott/Projects/openvas/base.sql.xz
+cp latest.var-lib.tar.xz /home/scott/Projects/openvas/var-lib.tar.xz
+
+# echo " Push updates to www"
+# scp *.xz push@www.immauss.com:/var/www/html/drupal/openvas/
+# if [ $? -ne 0 ]; then
+# 	echo "SCP of new db failed $?"
+# 	logger -t db-refresh "SCP of new db failed $?"
+# 	exit
+# fi
+echo "Now rebuild the image"
 cd $WorkDir
+echo "$(pwd) Is current working directory."
 date > update.ts
-docker buildx build -f Dockerfile.refresh --build-arg TAG=${TAG} --target final -t immauss/openvas:$TAG --platform linux/arm64,linux/amd64,linux/arm/v7 --push .
+docker buildx build -f $DOCKERFILE --target final -t immauss/openvas:$TAG --platform linux/arm64,linux/amd64,linux/arm/v7 --push .
 if [ $? -ne 0 ]; then
 	echo "Build failed."
 	exit
@@ -108,5 +114,3 @@ echo "Cleaning up"
 cd $TWD
 rm -rf *
 echo "All done"
-
-
