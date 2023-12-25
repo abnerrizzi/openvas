@@ -11,6 +11,7 @@ WorkDir=$(pwd)
 # Tag to work with. Normally latest but might be using new tag during upgrades.
 TAG="latest"
 SQLBU="${TAG}.base.sql"
+TAR="${TAG}.var-lib.tar.xz"
 VER=$(cat ver.current)
 DOCKERFILE=$(mktemp)
 sed "s/\$VER/$VER/" Dockerfile.refresh > $DOCKERFILE
@@ -112,5 +113,10 @@ fi
 
 echo "Cleaning up"
 cd $TWD
-rm -rf *
+if [ $? -eq 0 ]; then 
+	rm -rf *
+else
+	echo "What happend to $TWD ???"
+	exit 1
+fi
 echo "All done"
